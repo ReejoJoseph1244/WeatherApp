@@ -9,12 +9,21 @@ import rain_icon from "../Assets/rain.png"
 import snow_icon from "../Assets/snow.png"
 import wind_icon from "../Assets/wind.png"
 import humidity_icon from "../Assets/humidity.png"
+import background_video from "../Assets/pexels_videos.mp4"
+import sunny_day from "../Assets/sunny_day.mp4"
+import rainny_day from "../Assets/rainny_day.mp4"
+import clear_day from "../Assets/clear_day.mp4"
+import snow_day from "../Assets/snow_day.mp4"
+import cloudy_day from "../Assets/cloudy_day.mp4"
+import drizzly_day from "../Assets/drizzly_day.mp4"
 
 const WeatherApp = () => {
 
-    let api_key = "466c351e6749b6df7a0267a34da6418b";
+    let api_key = process.env.REACT_APP_API_KEY;
 
     const [wicon,setWicon] = useState(cloud_icon);
+    const [bgvideo,Setbgvideo]=useState(background_video);
+   
 
     const search = async ()=>{
         const element = document.getElementsByClassName("cityInput");
@@ -39,72 +48,112 @@ const WeatherApp = () => {
         temperature[0].innerHTML = Math.floor(data.main.temp) +"°C";
         location[0].innerHTML = data.name;
 
+        const temperature_value = Math.floor(data.main.temp);
+
+        
+
         if(data.weather[0].icon==="01d" ||data.weather[0].icon==="01n")
         {
             setWicon(clear_icon);
+            Setbgvideo(clear_day);
+
         }
         else if(data.weather[0].icon==="02d" ||data.weather[0].icon==="02n")
         {
             setWicon(cloud_icon);
+            Setbgvideo(cloudy_day);
+            
         }
         else if(data.weather[0].icon==="03d" ||data.weather[0].icon==="03n")
         {
+           if(temperature_value<=0){
+            setWicon(snow_icon);
+            Setbgvideo(snow_day);
+           } else{
             setWicon(drizzle_icon);
+            Setbgvideo(drizzly_day);
+           }
         }
         else if(data.weather[0].icon==="04d" ||data.weather[0].icon==="04n")
         {
+          if(temperature_value<=0){
+            setWicon(snow_icon);
+            Setbgvideo(snow_day);
+           } else{
             setWicon(drizzle_icon);
+            Setbgvideo(drizzly_day);
+           }
         }
         else if(data.weather[0].icon==="09d" ||data.weather[0].icon==="09n")
         {
             setWicon(rain_icon);
+            Setbgvideo(rainny_day);
+            
         }
         else if(data.weather[0].icon==="10d" ||data.weather[0].icon==="10n")
         {
             setWicon(rain_icon);
+            Setbgvideo(rainny_day);
         }
         else if(data.weather[0].icon==="13d" ||data.weather[0].icon==="13n")
         {
             setWicon(snow_icon);
+            Setbgvideo(snow_day);
         }
         else{
+          if(temperature_value<=0){
+            setWicon(snow_icon);
+            Setbgvideo(snow_day);
+           } else{
             setWicon(clear_icon);
+            Setbgvideo(sunny_day);
+           }
         }
     }
 
   return (
-    <div className='container'>
-        <div className='top-bar'>
-            <input type="text" className="cityInput" placeholder='Search' />
-            <div className="search-icon" onClick={()=>{search()}}>
-                <img src={search_icon} alt="" />
-            </div>
+    <div className='bodyblock'>
+        <video autoPlay loop muted key={bgvideo}>
+		<source src={bgvideo} type='video/mp4' />
+	  </video>
+      <div className="container">
+        <div className="top-bar">
+          <input type="text" className="cityInput" placeholder="Search" />
+          <div
+            className="search-icon"
+            onClick={() => {
+              search();
+            }}
+          >
+            <img src={search_icon} alt="" />
+          </div>
         </div>
         <div className="weather-image">
-            <img src={wicon} alt="" />
+          <img src={wicon} alt="" />
         </div>
 
         <div className="weather-temp">24 °C</div>
         <div className="weather-location">London</div>
         <div className="data-container">
-            <div className="element">
-                <img src={humidity_icon} alt=""  className='icon'/>
-                <div className="data">
-                    <div className="humidity-percent">64%</div>
-                    <div className="text">Humidity</div>
-                </div>
+          <div className="element">
+            <img src={humidity_icon} alt="" className="icon" />
+            <div className="data">
+              <div className="humidity-percent">64%</div>
+              <div className="text">Humidity</div>
             </div>
+          </div>
 
-            <div className="element">
-                <img src={wind_icon} alt=""  className='icon'/>
-                <div className="data">
-                    <div className="wind-rate">18 km/h</div>
-                    <div className="text">Wind Speed</div>
-                </div>
+          <div className="element">
+            <img src={wind_icon} alt="" className="icon" />
+            <div className="data">
+              <div className="wind-rate">18 km/h</div>
+              <div className="text">Wind Speed</div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-  )
+  );
 }
 
 export default WeatherApp;
